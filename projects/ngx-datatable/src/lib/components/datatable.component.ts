@@ -461,6 +461,8 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit, After
    */
   @Output() treeAction: EventEmitter<any> = new EventEmitter();
 
+  @Input() disabled;
+
   /**
    * CSS class applied if the header height if fixed height.
    */

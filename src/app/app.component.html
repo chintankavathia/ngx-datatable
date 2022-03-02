@@ -180,6 +180,12 @@
         </ul>
       </li>
       <li>
+        <h4>Rows</h4>
+        <ul>
+          <li><a href="#disabled" (click)="state = 'disabled'">Disabled</a></li>
+        </ul>
+      </li>
+      <li>
         <h4>Summary Row</h4>
         <ul>
           <li>
@@ -272,5 +278,8 @@
     <summary-row-custom-template-demo *ngIf="state === 'custom-template-summary'"> </summary-row-custom-template-demo>
     <summary-row-server-paging-demo *ngIf="state === 'paging-summary'"> </summary-row-server-paging-demo>
     <summary-row-inline-html *ngIf="state === 'inline-html-summary'"></summary-row-inline-html>
+
+    <!-- rows -->
+    <disabled-rows-demo *ngIf="state === 'disabled'"></disabled-rows-demo>
   </content>
 </div>

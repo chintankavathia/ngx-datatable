@@ -277,6 +277,11 @@ $datatable-summary-row-background-hover: #ddd !default;
         font-size: 14px;
         font-weight: 400;
 
+        .disabled {
+          color: #83888E;
+          cursor: pointer;
+        }
+
         // cell active class
         // &.active {
         //  background: #0829e0
@@ -332,7 +337,7 @@ $datatable-summary-row-background-hover: #ddd !default;
         }
       }
     }
-    
+
     .custom-loading-indicator-wrapper {
       position: sticky;
       top: 0;

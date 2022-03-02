@@ -33,6 +33,11 @@ bootstrap table theme
         padding: 0.75rem;
         text-align: left;
         vertical-align: top;
+
+        .disabled {
+          color: #83888E;
+          cursor: pointer;
+        }
       }
     }
     .empty-row {

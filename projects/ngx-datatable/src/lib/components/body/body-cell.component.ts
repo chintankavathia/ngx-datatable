@@ -25,12 +25,12 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
   selector: 'datatable-body-cell',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="datatable-body-cell-label" [style.margin-left.px]="calcLeftMargin(column, row)">
+    <div class="datatable-body-cell-label" [class.disabled]="disabled" [style.margin-left.px]="calcLeftMargin(column, row)">
       <label
         *ngIf="column.checkboxable && (!displayCheck || displayCheck(row, column, value))"
         class="datatable-checkbox"
       >
-        <input type="checkbox" [checked]="isSelected" (click)="onCheckboxChange($event)" />
+        <input [disabled]="disabled" type="checkbox" [checked]="isSelected" (click)="onCheckboxChange($event)" />
       </label>
       <ng-container *ngIf="column.isTreeColumn">
         <button
@@ -53,7 +53,7 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
         </ng-template>
       </ng-container>
 
-      <span *ngIf="!column.cellTemplate" [title]="sanitizedValue" [innerHTML]="value"> </span>
+      <span *ngIf="!column.cellTemplate" [title]="sanitizedValue" [class.disabled]="disabled" [innerHTML]="value"> </span>
       <ng-template
         #cellTemplate
         *ngIf="column.cellTemplate"
@@ -66,6 +66,15 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
 })
 export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
   @Input() displayCheck: (row: any, column?: TableColumn, value?: any) => boolean;
+
+  _disabled = false;
+  @Input() set disabled(val) {
+    this._disabled = val;
+    this.cellContext.disabled = val;
+  }
+  get disabled() {
+    return this._disabled;
+  }
 
   @Input() set group(group: any) {
     this._group = group;
@@ -272,6 +281,7 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
       isSelected: this.isSelected,
       rowIndex: this.rowIndex,
       treeStatus: this.treeStatus,
+      disabled: this.disabled,
       onTreeAction: this.onTreeAction.bind(this)
     };
 
@@ -307,6 +317,7 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
     if (this.value !== value) {
       this.value = value;
       this.cellContext.value = value;
+      this.cellContext.disabled = this.disabled;
       this.sanitizedValue = value !== null && value !== undefined ? this.stripHtml(value) : value;
       this.cd.markForCheck();
     }
