@@ -29,8 +29,9 @@ import { ColumnMode, SelectionType } from 'projects/ngx-datatable/src/public-api
           [columnMode]="ColumnMode.force"
           [headerHeight]="50"
           [footerHeight]="50"
-          rowHeight="auto"
-          [limit]="5"
+          [rowHeight]="50"
+          [limit]="1000"
+          [scrollbarV]="true"
           [selected]="selected"
           [selectionType]="SelectionType.checkbox"
           [selectAllRowsOnPage]="false"
@@ -82,7 +83,7 @@ export class DisabledRowsComponent {
 
   constructor() {
     this.fetch(data => {
-      this.rows = data;
+      this.rows = [...data, ...(data.reverse()), ...(data.reverse()), ...(data.reverse()), ...(data.reverse()), ...(data.reverse())];
     });
   }
 

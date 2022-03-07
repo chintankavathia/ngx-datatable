@@ -1,7 +1,9 @@
 import {
+  AfterContentInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ContentChildren,
   DoCheck,
   ElementRef,
   EventEmitter,
@@ -56,6 +58,8 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
       <span *ngIf="!column.cellTemplate" [title]="sanitizedValue" [class.disabled]="disabled" [innerHTML]="value"> </span>
       <ng-template
         #cellTemplate
+        [disabled]="disabled"
+        disable
         *ngIf="column.cellTemplate"
         [ngTemplateOutlet]="column.cellTemplate"
         [ngTemplateOutletContext]="cellContext"
