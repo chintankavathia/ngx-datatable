@@ -59,7 +59,7 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
       <ng-template
         #cellTemplate
         [disabled]="disabled"
-        disable
+        disable-row
         *ngIf="column.cellTemplate"
         [ngTemplateOutlet]="column.cellTemplate"
         [ngTemplateOutletContext]="cellContext"

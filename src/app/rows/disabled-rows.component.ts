@@ -15,81 +15,56 @@ import { ColumnMode, SelectionType } from 'projects/ngx-datatable/src/public-api
             Source
           </a>
         </small>
-        <small>
-          <a href="javascript:void(0)" (click)="add()">Add</a> |
-          <a href="javascript:void(0)" (click)="update()">Update</a> |
-          <a href="javascript:void(0)" (click)="remove()">Remove</a>
-        </small>
       </h3>
-      <div style="float:left;width:75%">
+      <div>
         <ngx-datatable
-          style="width: 90%"
           class="material"
           [rows]="rows"
-          [columnMode]="ColumnMode.force"
+          columnMode="force"
           [headerHeight]="50"
-          [footerHeight]="50"
+          [footerHeight]="0"
           [rowHeight]="50"
-          [limit]="1000"
           [scrollbarV]="true"
-          [selected]="selected"
-          [selectionType]="SelectionType.checkbox"
-          [selectAllRowsOnPage]="false"
-          [displayCheck]="displayCheck"
-          (activate)="onActivate($event)"
-          (select)="onSelect($event)"
-          [disabled]="isRowDisabled"
+          [checkRowDisabled]="isRowDisabled"
         >
-          <ngx-datatable-column
-            [width]="30"
-            [sortable]="false"
-            [canAutoResize]="false"
-            [draggable]="false"
-            [resizeable]="false"
-            [headerCheckboxable]="true"
-            [checkboxable]="true"
-          >
-          </ngx-datatable-column>
           <ngx-datatable-column  name="Name">
-          <ng-template let-disabled="disabled" let-value="value" ngx-datatable-cell-template>
-          <button [disabled]="disabled"> {{value}}</button>
+          <ng-template let-value="value" ngx-datatable-cell-template>
+          {{value}}
           </ng-template>
           </ngx-datatable-column>
-          <ngx-datatable-column name="Gender"></ngx-datatable-column>
-          <ngx-datatable-column name="Company"></ngx-datatable-column>
+          <ngx-datatable-column name="Gender">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <select [style.height]="'auto'" [style.margin]="0">
+                <option>Male</option>
+                <option [selected]="value==='female'">Female</option>
+              </select>
+            </ng-template>
+          </ngx-datatable-column>
+          <ngx-datatable-column name="Age">
+            <ng-template let-value="value" ngx-datatable-cell-template>
+              <input [value]="value" />
+            </ng-template>
+          </ngx-datatable-column>
         </ngx-datatable>
-      </div>
-
-      <div class="selected-column">
-        <h4>
-          Selections <small>({{ selected?.length }})</small>
-        </h4>
-        <ul>
-          <li *ngFor="let sel of selected">
-            {{ sel.name }}
-          </li>
-          <li *ngIf="!selected?.length">No Selections</li>
-        </ul>
       </div>
     </div>
   `
 })
 export class DisabledRowsComponent {
   rows = [];
-  selected = [];
 
   ColumnMode = ColumnMode;
   SelectionType = SelectionType;
 
   constructor() {
     this.fetch(data => {
-      this.rows = [...data, ...(data.reverse()), ...(data.reverse()), ...(data.reverse()), ...(data.reverse()), ...(data.reverse())];
+      this.rows = data;
     });
   }
 
   fetch(cb) {
     const req = new XMLHttpRequest();
-    req.open('GET', `assets/data/company.json`);
+    req.open('GET', `assets/data/100k.json`);
 
     req.onload = () => {
       cb(JSON.parse(req.response));
@@ -98,38 +73,11 @@ export class DisabledRowsComponent {
     req.send();
   }
 
-  onSelect({ selected }) {
-    console.log('Select Event', selected, this.selected);
-
-    this.selected.splice(0, this.selected.length);
-    this.selected.push(...selected);
-  }
-
-  onActivate(event) {
-    console.log('Activate Event', event);
-  }
-
-  add() {
-    this.selected.push(this.rows[1], this.rows[3]);
-  }
-
-  update() {
-    this.selected = [this.rows[1], this.rows[3]];
-  }
-
-  remove() {
-    this.selected = [];
-  }
-
-  displayCheck(row) {
-    return row.name !== 'Ethel Price';
-  }
-
   isRowDisabled(row) {
-    if (row.age) {
-      return true;
-    } else {
+    if (row.age < 40) {
       return false;
+    } else {
+      return true;
     }
   }
 }

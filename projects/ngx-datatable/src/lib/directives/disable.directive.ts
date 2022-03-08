@@ -1,24 +1,22 @@
-import { AfterContentInit, Directive, ElementRef, Input, NgZone, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterContentChecked, Directive, ElementRef, Input } from '@angular/core';
 
 /**
  * Row Disable Directive
  *
  */
-@Directive({ selector: '[disable]' })
-export class DisableDirective implements AfterContentInit {
+@Directive({ selector: '[disable-row]' })
+export class DisableRowDirective implements AfterContentChecked {
   @Input() disabled;
-  constructor(private element: ElementRef, private zone: NgZone) {}
+  constructor(private element: ElementRef) {}
 
-  ngAfterContentInit(): void {
-    if (!this.disabled) {
+  ngAfterContentChecked(): void {
+    const el = this.element.nativeElement.parentElement;
+    const parent = el.parentElement;
+    if (!this.disabled || !el || !parent) {
       return;
     }
-    const el = this.element.nativeElement.parentElement;
-    el.innerHTML += '';
     Array.from(el.children as HTMLAllCollection).forEach(child => {
-      console.log(child);
       child?.setAttribute('disabled', '');
     });
-    console.log(el);
   }
 }

@@ -83,7 +83,7 @@ import { translateXY } from '../../utils/translate';
             [expanded]="getRowExpanded(group)"
             [rowClass]="rowClass"
             [displayCheck]="displayCheck"
-            [disabled]="disabled ? disabled(group) : false"
+            [disabled]="group | rowState : checkRowDisabled"
             [treeStatus]="group && group.treeStatus"
             (treeAction)="onTreeAction(group)"
             (activate)="selector.onActivate($event, indexes.first + i)"
@@ -104,7 +104,7 @@ import { translateXY } from '../../utils/translate';
               [rowIndex]="getRowIndex(row)"
               [expanded]="getRowExpanded(row)"
               [rowClass]="rowClass"
-              [disabled]="disabled ? disabled(group) : false"
+              [disabled]="group | rowState : checkRowDisabled"
               (activate)="selector.onActivate($event, i)"
             >
             </datatable-body-row>
@@ -162,7 +162,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
   @Input() summaryRow: boolean;
   @Input() summaryPosition: string;
   @Input() summaryHeight: number;
-  @Input() disabled;
+  @Input() checkRowDisabled;
 
   @Input() set pageSize(val: number) {
     if (val !== this._pageSize) {

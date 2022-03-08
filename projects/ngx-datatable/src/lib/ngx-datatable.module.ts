@@ -31,8 +31,8 @@ import { DataTableColumnCellTreeToggle } from './components/columns/tree.directi
 import { DatatableFooterDirective } from './components/footer/footer.directive';
 import { DatatableGroupHeaderTemplateDirective } from './components/body/body-group-header-template.directive';
 import { DataTableSummaryRowComponent } from './components/body/summary/summary-row.component';
-import { DisabledPipe } from './pipes/disabled.pipe';
-import { DisableDirective } from './directives/disable.directive';
+import { RowStatePipe } from './pipes/row-state.pipe';
+import { DisableRowDirective } from './directives/disable.directive';
 
 @NgModule({
   imports: [CommonModule],
@@ -66,8 +66,8 @@ import { DisableDirective } from './directives/disable.directive';
     DatatableFooterDirective,
     DatatableGroupHeaderTemplateDirective,
     DataTableSummaryRowComponent,
-    DisabledPipe,
-    DisableDirective
+    RowStatePipe,
+    DisableRowDirective
   ],
   exports: [
     DatatableComponent,
