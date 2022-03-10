@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -10,6 +11,9 @@ import {
   Input,
   KeyValueDiffer,
   KeyValueDiffers,
+  OnChanges,
+  OnDestroy,
+  OnInit,
   Output,
   SkipSelf
 } from '@angular/core';
@@ -19,6 +23,8 @@ import { columnGroupWidths, columnsByPin, columnsByPinArr } from '../../utils/co
 import { Keys } from '../../utils/keys';
 import { ScrollbarHelper } from '../../services/scrollbar-helper.service';
 import { translateXY } from '../../utils/translate';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { RowStatePipe } from '../../pipes/row-state.pipe';
 
 @Component({
   selector: 'datatable-body-row',
@@ -28,6 +34,7 @@ import { translateXY } from '../../utils/translate';
       *ngFor="let colGroup of _columnsByPin; let i = index; trackBy: trackByGroups"
       class="datatable-row-{{ colGroup.type }} datatable-row-group"
       [ngStyle]="_groupStyles[colGroup.type]"
+      [class.row-disabled]="updateRowState$ | async"
     >
       <datatable-body-cell
         role="cell"
@@ -41,8 +48,8 @@ import { translateXY } from '../../utils/translate';
         [column]="column"
         [rowHeight]="rowHeight"
         [displayCheck]="displayCheck"
+        [updateRowState$]="updateRowState$"
         [treeStatus]="treeStatus"
-        [disabled]="disabled"
         (activate)="onActivate($event, ii)"
         (treeAction)="onTreeAction()"
       >
@@ -50,7 +57,7 @@ import { translateXY } from '../../utils/translate';
     </div>
   `
 })
-export class DataTableBodyRowComponent implements DoCheck {
+export class DataTableBodyRowComponent implements DoCheck, OnInit, OnDestroy {
   @Input() set columns(val: any[]) {
     this._columns = val;
     this.recalculateColumns(val);
@@ -84,8 +91,8 @@ export class DataTableBodyRowComponent implements DoCheck {
   @Input() rowIndex: number;
   @Input() displayCheck: any;
   @Input() treeStatus: TreeStatus = 'collapsed';
-  @Input() disabled = false;
-
+  @Input() checkRowDisabled;
+  updateRowState$: BehaviorSubject<boolean>;
   @Input()
   set offsetX(val: number) {
     this._offsetX = val;
@@ -155,14 +162,24 @@ export class DataTableBodyRowComponent implements DoCheck {
     private differs: KeyValueDiffers,
     @SkipSelf() private scrollbarHelper: ScrollbarHelper,
     private cd: ChangeDetectorRef,
-    element: ElementRef
+    element: ElementRef,
+    private rowStatePipe: RowStatePipe
   ) {
     this._element = element.nativeElement;
     this._rowDiffer = differs.find({}).create();
   }
+  ngOnDestroy(): void {
+    this.updateRowState$.unsubscribe();
+  }
+  ngOnInit(): void {
+    const rowState = this.rowStatePipe.transform(this.row, this.checkRowDisabled);
+    this.updateRowState$ = new BehaviorSubject(rowState);
+  }
 
   ngDoCheck(): void {
     if (this._rowDiffer.diff(this.row)) {
+      const rowState = this.rowStatePipe.transform(this.row, this.checkRowDisabled);
+      this.updateRowState$.next(rowState);
       this.cd.markForCheck();
     }
   }

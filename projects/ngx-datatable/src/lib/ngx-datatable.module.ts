@@ -36,7 +36,7 @@ import { DisableRowDirective } from './directives/disable.directive';
 
 @NgModule({
   imports: [CommonModule],
-  providers: [ScrollbarHelper, DimensionsHelper, ColumnChangesService],
+  providers: [ScrollbarHelper, DimensionsHelper, ColumnChangesService, RowStatePipe],
   declarations: [
     DataTableFooterTemplateDirective,
     VisibilityDirective,

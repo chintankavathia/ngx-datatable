@@ -83,7 +83,7 @@ import { translateXY } from '../../utils/translate';
             [expanded]="getRowExpanded(group)"
             [rowClass]="rowClass"
             [displayCheck]="displayCheck"
-            [disabled]="group | rowState : checkRowDisabled"
+            [checkRowDisabled]="checkRowDisabled"
             [treeStatus]="group && group.treeStatus"
             (treeAction)="onTreeAction(group)"
             (activate)="selector.onActivate($event, indexes.first + i)"
@@ -104,7 +104,7 @@ import { translateXY } from '../../utils/translate';
               [rowIndex]="getRowIndex(row)"
               [expanded]="getRowExpanded(row)"
               [rowClass]="rowClass"
-              [disabled]="group | rowState : checkRowDisabled"
+              [checkRowDisabled]="checkRowDisabled"
               (activate)="selector.onActivate($event, i)"
             >
             </datatable-body-row>

@@ -28,6 +28,13 @@ bootstrap table theme
         background-color: #1483ff;
         color: #fff;
       }
+      .row-disabled {
+        .datatable-body-cell-label {
+          color: #83888E;
+          cursor: pointer;
+        }
+      }
+
       .datatable-body-cell {
         flex-shrink: 0;
         padding: 0.75rem;

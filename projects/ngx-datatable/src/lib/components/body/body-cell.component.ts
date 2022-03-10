@@ -1,9 +1,7 @@
 import {
-  AfterContentInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ContentChildren,
   DoCheck,
   ElementRef,
   EventEmitter,
@@ -27,12 +25,12 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
   selector: 'datatable-body-cell',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="datatable-body-cell-label" [class.disabled]="disabled" [style.margin-left.px]="calcLeftMargin(column, row)">
+    <div class="datatable-body-cell-label" [style.margin-left.px]="calcLeftMargin(column, row)">
       <label
         *ngIf="column.checkboxable && (!displayCheck || displayCheck(row, column, value))"
         class="datatable-checkbox"
       >
-        <input [disabled]="disabled" type="checkbox" [checked]="isSelected" (click)="onCheckboxChange($event)" />
+        <input type="checkbox" [checked]="isSelected" (click)="onCheckboxChange($event)" />
       </label>
       <ng-container *ngIf="column.isTreeColumn">
         <button
@@ -55,11 +53,9 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
         </ng-template>
       </ng-container>
 
-      <span *ngIf="!column.cellTemplate" [title]="sanitizedValue" [class.disabled]="disabled" [innerHTML]="value"> </span>
+      <span *ngIf="!column.cellTemplate" [title]="sanitizedValue" [innerHTML]="value"> </span>
       <ng-template
         #cellTemplate
-        [disabled]="disabled"
-        disable-row
         *ngIf="column.cellTemplate"
         [ngTemplateOutlet]="column.cellTemplate"
         [ngTemplateOutletContext]="cellContext"
@@ -71,13 +67,13 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
 export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
   @Input() displayCheck: (row: any, column?: TableColumn, value?: any) => boolean;
 
-  _disabled = false;
-  @Input() set disabled(val) {
-    this._disabled = val;
-    this.cellContext.disabled = val;
-  }
-  get disabled() {
-    return this._disabled;
+  _updateRowState$;
+  @Input() set updateRowState$(val: any) {
+    this._updateRowState$ = val;
+    this.cellContext.updateRowState$ = val;
+  };
+  get updateRowState$() {
+    return this._updateRowState$;
   }
 
   @Input() set group(group: any) {
@@ -285,12 +281,13 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
       isSelected: this.isSelected,
       rowIndex: this.rowIndex,
       treeStatus: this.treeStatus,
-      disabled: this.disabled,
+      updateRowState$: this.updateRowState$,
       onTreeAction: this.onTreeAction.bind(this)
     };
 
     this._element = element.nativeElement;
   }
+
 
   ngDoCheck(): void {
     this.checkValueUpdates();
@@ -321,7 +318,7 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
     if (this.value !== value) {
       this.value = value;
       this.cellContext.value = value;
-      this.cellContext.disabled = this.disabled;
+      this.cellContext.updateRowState$ = this.updateRowState$;
       this.sanitizedValue = value !== null && value !== undefined ? this.stripHtml(value) : value;
       this.cd.markForCheck();
     }

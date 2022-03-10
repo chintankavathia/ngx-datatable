@@ -266,6 +266,14 @@ $datatable-summary-row-background-hover: #ddd !default;
     }
 
     .datatable-body-row {
+
+      .row-disabled {
+        .datatable-body-cell-label {
+          color: #83888E;
+          cursor: pointer;
+        }
+      }
+
       .datatable-body-cell {
         flex-shrink: 0;
         text-align: left;
