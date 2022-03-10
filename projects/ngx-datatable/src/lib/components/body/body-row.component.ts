@@ -26,7 +26,6 @@ import { Keys } from '../../utils/keys';
 import { ScrollbarHelper } from '../../services/scrollbar-helper.service';
 import { translateXY } from '../../utils/translate';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { RowStatePipe } from '../../pipes/row-state.pipe';
 import { DataTableRowWrapperComponent } from './body-row-wrapper.component';
 
 @Component({
@@ -166,7 +165,6 @@ export class DataTableBodyRowComponent implements DoCheck, OnInit, OnDestroy {
     @SkipSelf() private scrollbarHelper: ScrollbarHelper,
     private cd: ChangeDetectorRef,
     element: ElementRef,
-    private rowStatePipe: RowStatePipe,
     @Optional() @Host() private parent: DataTableRowWrapperComponent
   ) {
     this._element = element.nativeElement;
@@ -181,8 +179,6 @@ export class DataTableBodyRowComponent implements DoCheck, OnInit, OnDestroy {
 
   ngDoCheck(): void {
     if (this._rowDiffer.diff(this.row)) {
-      const rowState = this.rowStatePipe.transform(this.row, this.checkRowDisabled);
-      this.disableRow$.next(rowState);
       this.cd.markForCheck();
     }
   }

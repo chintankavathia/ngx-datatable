@@ -24,7 +24,7 @@ import { BehaviorSubject } from 'rxjs';
           columnMode="force"
           [headerHeight]="50"
           [footerHeight]="0"
-          [rowHeight]="50"
+          [rowHeight]="80"
           [scrollbarV]="true"
           [checkRowDisabled]="isRowDisabled"
         >
@@ -46,8 +46,13 @@ import { BehaviorSubject } from 'rxjs';
           <ngx-datatable-column name="Age">
             <ng-template let-row="row" let-disableRow$="disableRow$" let-rowIndex="rowIndex"
             let-value="value" ngx-datatable-cell-template>
+            <div [disabled]="disableRow$ | async" disable-row>
+              <input (blur)="updateValue($event, 'age', rowIndex, disableRow$)"
+              [value]="value" />
+              <br/>
               <input (blur)="updateValue($event, 'age', rowIndex, disableRow$)"
               [disabled]="disableRow$ ? (disableRow$ | async) : false" [value]="value" />
+            </div>
             </ng-template>
           </ngx-datatable-column>
         </ngx-datatable>
@@ -89,7 +94,7 @@ export class DisabledRowsComponent {
   updateValue(event, cell, rowIndex, checkDisableRow$) {
     this.rows[rowIndex][cell] = event.target.value;
     this.rows = [...this.rows];
-    if (checkDisableRow$ && cell === 'age' && this.rows[rowIndex][cell] > 50) {
+    if (checkDisableRow$ && cell === 'age' && this.rows[rowIndex][cell] > 40) {
       checkDisableRow$.next(true);
     }
   }

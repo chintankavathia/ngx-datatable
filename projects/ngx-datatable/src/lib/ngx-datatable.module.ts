@@ -31,12 +31,11 @@ import { DataTableColumnCellTreeToggle } from './components/columns/tree.directi
 import { DatatableFooterDirective } from './components/footer/footer.directive';
 import { DatatableGroupHeaderTemplateDirective } from './components/body/body-group-header-template.directive';
 import { DataTableSummaryRowComponent } from './components/body/summary/summary-row.component';
-import { RowStatePipe } from './pipes/row-state.pipe';
-import { DisableRowDirective } from './directives/disable.directive';
+import { DisableRowDirective } from './directives/disable-row.directive';
 
 @NgModule({
   imports: [CommonModule],
-  providers: [ScrollbarHelper, DimensionsHelper, ColumnChangesService, RowStatePipe],
+  providers: [ScrollbarHelper, DimensionsHelper, ColumnChangesService],
   declarations: [
     DataTableFooterTemplateDirective,
     VisibilityDirective,
@@ -66,7 +65,6 @@ import { DisableRowDirective } from './directives/disable.directive';
     DatatableFooterDirective,
     DatatableGroupHeaderTemplateDirective,
     DataTableSummaryRowComponent,
-    RowStatePipe,
     DisableRowDirective
   ],
   exports: [
@@ -81,7 +79,8 @@ import { DisableRowDirective } from './directives/disable.directive';
     DataTableFooterTemplateDirective,
     DatatableFooterDirective,
     DataTablePagerComponent,
-    DatatableGroupHeaderTemplateDirective
+    DatatableGroupHeaderTemplateDirective,
+    DisableRowDirective
   ]
 })
 export class NgxDatatableModule {

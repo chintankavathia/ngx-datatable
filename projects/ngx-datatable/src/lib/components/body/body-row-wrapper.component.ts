@@ -13,7 +13,6 @@ import {
   Output
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { RowStatePipe } from '../../pipes/row-state.pipe';
 
 @Component({
   selector: 'datatable-row-wrapper',
@@ -87,7 +86,7 @@ export class DataTableRowWrapperComponent implements DoCheck, OnInit, OnDestroy 
   private _expanded = false;
   private _rowIndex: number;
 
-  constructor(private cd: ChangeDetectorRef, private differs: KeyValueDiffers, private rowStatePipe: RowStatePipe) {
+  constructor(private cd: ChangeDetectorRef, private differs: KeyValueDiffers) {
     this.groupContext = {
       group: this.row,
       expanded: this.expanded,
@@ -108,7 +107,7 @@ export class DataTableRowWrapperComponent implements DoCheck, OnInit, OnDestroy 
     this.disableRow$.unsubscribe();
   }
   ngOnInit(): void {
-    const rowState = this.rowStatePipe.transform(this.row, this.checkRowDisabled);
+    const rowState = this.checkRowDisabled(this.row);
     this.disableRow$ = new BehaviorSubject(rowState);
     this.rowContext.disableRow$ = this.disableRow$;
   }
@@ -117,6 +116,8 @@ export class DataTableRowWrapperComponent implements DoCheck, OnInit, OnDestroy 
     if (this.rowDiffer.diff(this.row)) {
       this.rowContext.row = this.row;
       this.groupContext.group = this.row;
+      const rowState = this.checkRowDisabled(this.row);
+      this.disableRow$.next(rowState);
       this.cd.markForCheck();
     }
   }
