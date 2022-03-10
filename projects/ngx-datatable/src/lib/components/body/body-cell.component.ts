@@ -67,13 +67,13 @@ export type TreeStatus = 'collapsed' | 'expanded' | 'loading' | 'disabled';
 export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
   @Input() displayCheck: (row: any, column?: TableColumn, value?: any) => boolean;
 
-  _updateRowState$;
-  @Input() set updateRowState$(val: any) {
-    this._updateRowState$ = val;
-    this.cellContext.updateRowState$ = val;
+  _disableRow$;
+  @Input() set disableRow$(val: any) {
+    this._disableRow$ = val;
+    this.cellContext.disableRow$ = val;
   };
-  get updateRowState$() {
-    return this._updateRowState$;
+  get disableRow$() {
+    return this._disableRow$;
   }
 
   @Input() set group(group: any) {
@@ -281,7 +281,7 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
       isSelected: this.isSelected,
       rowIndex: this.rowIndex,
       treeStatus: this.treeStatus,
-      updateRowState$: this.updateRowState$,
+      disableRow$: this.disableRow$,
       onTreeAction: this.onTreeAction.bind(this)
     };
 
@@ -318,7 +318,7 @@ export class DataTableBodyCellComponent implements DoCheck, OnDestroy {
     if (this.value !== value) {
       this.value = value;
       this.cellContext.value = value;
-      this.cellContext.updateRowState$ = this.updateRowState$;
+      this.cellContext.disableRow$ = this.disableRow$;
       this.sanitizedValue = value !== null && value !== undefined ? this.stripHtml(value) : value;
       this.cd.markForCheck();
     }

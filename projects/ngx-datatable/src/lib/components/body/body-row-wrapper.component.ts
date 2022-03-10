@@ -81,7 +81,7 @@ export class DataTableRowWrapperComponent implements DoCheck, OnInit, OnDestroy 
 
   groupContext: any;
   rowContext: any;
-  updateRowState$: BehaviorSubject<boolean>;
+  disableRow$: BehaviorSubject<boolean>;
 
   private rowDiffer: KeyValueDiffer<unknown, unknown>;
   private _expanded = false;
@@ -98,19 +98,19 @@ export class DataTableRowWrapperComponent implements DoCheck, OnInit, OnDestroy 
       row: this.row,
       expanded: this.expanded,
       rowIndex: this.rowIndex,
-      updateRowState$: this.updateRowState$
+      disableRow$: this.disableRow$
     };
 
     this.rowDiffer = differs.find({}).create();
   }
 
   ngOnDestroy(): void {
-    this.updateRowState$.unsubscribe();
+    this.disableRow$.unsubscribe();
   }
   ngOnInit(): void {
     const rowState = this.rowStatePipe.transform(this.row, this.checkRowDisabled);
-    this.updateRowState$ = new BehaviorSubject(rowState);
-    this.rowContext.updateRowState$ = this.updateRowState$;
+    this.disableRow$ = new BehaviorSubject(rowState);
+    this.rowContext.disableRow$ = this.disableRow$;
   }
 
   ngDoCheck(): void {

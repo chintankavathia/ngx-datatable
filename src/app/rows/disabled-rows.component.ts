@@ -35,19 +35,19 @@ import { BehaviorSubject } from 'rxjs';
           </ngx-datatable-column>
           <ngx-datatable-column name="Gender">
             <ng-template let-value="value" let-rowIndex="rowIndex"
-            let-row="row" let-updateRowState$="updateRowState$" ngx-datatable-cell-template>
-              <select [style.height]="'auto'" (change)="updateValue($event, 'gender', rowIndex, updateRowState$)"
-               [disabled]="updateRowState$ ? (updateRowState$ | async) : false" [style.margin]="0">
-                <option>Male </option>
-                <option [selected]="value==='female'">Female</option>
+            let-row="row" let-disableRow$="disableRow$" ngx-datatable-cell-template>
+              <select [style.height]="'auto'" [value]="value" (change)="updateValue($event, 'gender', rowIndex, disableRow$)"
+               [disabled]="disableRow$ ? (disableRow$ | async) : false" [style.margin]="0">
+               <option value="male">Male</option>
+               <option value="female">Female</option>
               </select>
             </ng-template>
           </ngx-datatable-column>
           <ngx-datatable-column name="Age">
-            <ng-template let-row="row" let-updateRowState$="updateRowState$" let-rowIndex="rowIndex"
+            <ng-template let-row="row" let-disableRow$="disableRow$" let-rowIndex="rowIndex"
             let-value="value" ngx-datatable-cell-template>
-              <input (blur)="updateValue($event, 'age', rowIndex, updateRowState$)"
-              [disabled]="updateRowState$ ? (updateRowState$ | async) : false" [value]="value" />
+              <input (blur)="updateValue($event, 'age', rowIndex, disableRow$)"
+              [disabled]="disableRow$ ? (disableRow$ | async) : false" [value]="value" />
             </ng-template>
           </ngx-datatable-column>
         </ngx-datatable>
@@ -79,7 +79,6 @@ export class DisabledRowsComponent {
   }
 
   isRowDisabled(row: any) {
-    console.log('called');
     if (row.age < 40) {
       return false;
     } else {
@@ -88,10 +87,8 @@ export class DisabledRowsComponent {
   }
 
   updateValue(event, cell, rowIndex, checkDisableRow$) {
-    console.log('inline editing rowIndex', rowIndex);
     this.rows[rowIndex][cell] = event.target.value;
     this.rows = [...this.rows];
-    console.log('UPDATED!', this.rows[rowIndex][cell]);
     if (checkDisableRow$ && cell === 'age' && this.rows[rowIndex][cell] > 50) {
       checkDisableRow$.next(true);
     }

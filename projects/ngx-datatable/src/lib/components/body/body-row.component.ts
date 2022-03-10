@@ -37,7 +37,7 @@ import { DataTableRowWrapperComponent } from './body-row-wrapper.component';
       *ngFor="let colGroup of _columnsByPin; let i = index; trackBy: trackByGroups"
       class="datatable-row-{{ colGroup.type }} datatable-row-group"
       [ngStyle]="_groupStyles[colGroup.type]"
-      [class.row-disabled]="updateRowState$ | async"
+      [class.row-disabled]="disableRow$ | async"
     >
       <datatable-body-cell
         role="cell"
@@ -51,7 +51,7 @@ import { DataTableRowWrapperComponent } from './body-row-wrapper.component';
         [column]="column"
         [rowHeight]="rowHeight"
         [displayCheck]="displayCheck"
-        [updateRowState$]="updateRowState$"
+        [disableRow$]="disableRow$"
         [treeStatus]="treeStatus"
         (activate)="onActivate($event, ii)"
         (treeAction)="onTreeAction()"
@@ -95,7 +95,7 @@ export class DataTableBodyRowComponent implements DoCheck, OnInit, OnDestroy {
   @Input() displayCheck: any;
   @Input() treeStatus: TreeStatus = 'collapsed';
   @Input() checkRowDisabled;
-  updateRowState$: BehaviorSubject<boolean>;
+  disableRow$: BehaviorSubject<boolean>;
   @Input()
   set offsetX(val: number) {
     this._offsetX = val;
@@ -173,16 +173,16 @@ export class DataTableBodyRowComponent implements DoCheck, OnInit, OnDestroy {
     this._rowDiffer = differs.find({}).create();
   }
   ngOnDestroy(): void {
-    this.updateRowState$.unsubscribe();
+    this.disableRow$.unsubscribe();
   }
   ngOnInit(): void {
-    this.updateRowState$ = this.parent.updateRowState$;
+    this.disableRow$ = this.parent.disableRow$;
   }
 
   ngDoCheck(): void {
     if (this._rowDiffer.diff(this.row)) {
       const rowState = this.rowStatePipe.transform(this.row, this.checkRowDisabled);
-      this.updateRowState$.next(rowState);
+      this.disableRow$.next(rowState);
       this.cd.markForCheck();
     }
   }
