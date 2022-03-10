@@ -29,7 +29,8 @@ import { BehaviorSubject } from 'rxjs';
           [checkRowDisabled]="isRowDisabled"
         >
           <ngx-datatable-column  name="Name">
-          <ng-template let-value="value" ngx-datatable-cell-template>
+          <ng-template let-value="value" let-rowIndex="rowIndex"
+          let-row="row" let-disableRow$="disableRow$" ngx-datatable-cell-template>
           {{value}}
           </ng-template>
           </ngx-datatable-column>
@@ -84,18 +85,21 @@ export class DisabledRowsComponent {
   }
 
   isRowDisabled(row: any) {
-    if (row.age < 40) {
+    if (row.age < 40 || row.gender === 'female') {
       return false;
     } else {
       return true;
     }
   }
 
-  updateValue(event, cell, rowIndex, checkDisableRow$) {
+  updateValue(event, cell, rowIndex, disableRow$) {
     this.rows[rowIndex][cell] = event.target.value;
     this.rows = [...this.rows];
-    if (checkDisableRow$ && cell === 'age' && this.rows[rowIndex][cell] > 40) {
-      checkDisableRow$.next(true);
+    if (disableRow$ && cell === 'age' && this.rows[rowIndex][cell] > 40) {
+      disableRow$.next(true);
+    }
+    if (disableRow$ && cell === 'gender' && this.rows[rowIndex][cell] === 'male') {
+      disableRow$.next(true);
     }
   }
 }
