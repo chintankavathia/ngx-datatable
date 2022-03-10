@@ -6,6 +6,7 @@ import {
   DoCheck,
   ElementRef,
   EventEmitter,
+  Host,
   HostBinding,
   HostListener,
   Input,
@@ -14,6 +15,7 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
+  Optional,
   Output,
   SkipSelf
 } from '@angular/core';
@@ -25,6 +27,7 @@ import { ScrollbarHelper } from '../../services/scrollbar-helper.service';
 import { translateXY } from '../../utils/translate';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { RowStatePipe } from '../../pipes/row-state.pipe';
+import { DataTableRowWrapperComponent } from './body-row-wrapper.component';
 
 @Component({
   selector: 'datatable-body-row',
@@ -163,7 +166,8 @@ export class DataTableBodyRowComponent implements DoCheck, OnInit, OnDestroy {
     @SkipSelf() private scrollbarHelper: ScrollbarHelper,
     private cd: ChangeDetectorRef,
     element: ElementRef,
-    private rowStatePipe: RowStatePipe
+    private rowStatePipe: RowStatePipe,
+    @Optional() @Host() private parent: DataTableRowWrapperComponent
   ) {
     this._element = element.nativeElement;
     this._rowDiffer = differs.find({}).create();
@@ -172,8 +176,7 @@ export class DataTableBodyRowComponent implements DoCheck, OnInit, OnDestroy {
     this.updateRowState$.unsubscribe();
   }
   ngOnInit(): void {
-    const rowState = this.rowStatePipe.transform(this.row, this.checkRowDisabled);
-    this.updateRowState$ = new BehaviorSubject(rowState);
+    this.updateRowState$ = this.parent.updateRowState$;
   }
 
   ngDoCheck(): void {

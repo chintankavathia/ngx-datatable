@@ -65,6 +65,7 @@ import { translateXY } from '../../utils/translate';
           [offsetX]="offsetX"
           [detailRowHeight]="getDetailRowHeight(group && group[i], i)"
           [row]="group"
+          [checkRowDisabled]="checkRowDisabled"
           [expanded]="getRowExpanded(group)"
           [rowIndex]="getRowIndex(group && group[i])"
           (rowContextmenu)="rowContextmenu.emit($event)"

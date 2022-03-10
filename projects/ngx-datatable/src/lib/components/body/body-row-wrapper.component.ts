@@ -8,8 +8,12 @@ import {
   Input,
   KeyValueDiffer,
   KeyValueDiffers,
+  OnDestroy,
+  OnInit,
   Output
 } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { RowStatePipe } from '../../pipes/row-state.pipe';
 
 @Component({
   selector: 'datatable-row-wrapper',
@@ -42,7 +46,7 @@ import {
     class: 'datatable-row-wrapper'
   }
 })
-export class DataTableRowWrapperComponent implements DoCheck {
+export class DataTableRowWrapperComponent implements DoCheck, OnInit, OnDestroy {
   @Input() innerWidth: number;
   @Input() rowDetail: any;
   @Input() groupHeader: any;
@@ -50,6 +54,7 @@ export class DataTableRowWrapperComponent implements DoCheck {
   @Input() detailRowHeight: any;
   @Input() row: any;
   @Input() groupedRows: any;
+  @Input() checkRowDisabled;
   @Output() rowContextmenu = new EventEmitter<{ event: MouseEvent; row: any }>(false);
 
   @Input() set rowIndex(val: number) {
@@ -76,12 +81,13 @@ export class DataTableRowWrapperComponent implements DoCheck {
 
   groupContext: any;
   rowContext: any;
+  updateRowState$: BehaviorSubject<boolean>;
 
   private rowDiffer: KeyValueDiffer<unknown, unknown>;
   private _expanded = false;
   private _rowIndex: number;
 
-  constructor(private cd: ChangeDetectorRef, private differs: KeyValueDiffers) {
+  constructor(private cd: ChangeDetectorRef, private differs: KeyValueDiffers, private rowStatePipe: RowStatePipe) {
     this.groupContext = {
       group: this.row,
       expanded: this.expanded,
@@ -91,10 +97,20 @@ export class DataTableRowWrapperComponent implements DoCheck {
     this.rowContext = {
       row: this.row,
       expanded: this.expanded,
-      rowIndex: this.rowIndex
+      rowIndex: this.rowIndex,
+      updateRowState$: this.updateRowState$
     };
 
     this.rowDiffer = differs.find({}).create();
+  }
+
+  ngOnDestroy(): void {
+    this.updateRowState$.unsubscribe();
+  }
+  ngOnInit(): void {
+    const rowState = this.rowStatePipe.transform(this.row, this.checkRowDisabled);
+    this.updateRowState$ = new BehaviorSubject(rowState);
+    this.rowContext.updateRowState$ = this.updateRowState$;
   }
 
   ngDoCheck(): void {
