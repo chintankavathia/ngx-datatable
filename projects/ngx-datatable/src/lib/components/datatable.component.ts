@@ -1227,6 +1227,17 @@ export class DatatableComponent implements OnInit, DoCheck, AfterViewInit, After
   }
 
   /**
+   * Toggle rows selection based on group header checkbox 
+   * @param event 
+   */
+  onGroupHeaderSelect(event: any): void {
+    this.selected = [...event.selected];
+    this.select.emit({
+      selected: this.selected
+    });
+  }
+
+  /**
    * A row was selected from body
    */
   onBodySelect(event: any): void {

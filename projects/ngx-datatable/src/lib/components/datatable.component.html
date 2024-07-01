@@ -72,6 +72,7 @@
       [rowDraggable]="rowDraggable"
       [rowDragEvents]="rowDragEvents"
       [rowDefTemplate]="rowDefTemplate"
+      (groupHeaderSelect)="onGroupHeaderSelect($event)"
     >
       <ng-content select="[loading-indicator]" ngProjectAs="[loading-indicator]"></ng-content>
       <ng-content select="[empty-content]" ngProjectAs="[empty-content]"></ng-content>

@@ -3,13 +3,17 @@ import {
   ChangeDetectorRef,
   Component,
   DoCheck,
+  ElementRef,
   EventEmitter,
   HostListener,
   Input,
+  IterableDiffer,
+  IterableDiffers,
   KeyValueDiffer,
   KeyValueDiffers,
   OnInit,
-  Output
+  Output,
+  ViewChild
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
@@ -18,12 +22,21 @@ import { BehaviorSubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div *ngIf="groupHeader && groupHeader.template" class="datatable-group-header" [ngStyle]="getGroupHeaderStyle()">
-      <ng-template
-        *ngIf="groupHeader && groupHeader.template"
-        [ngTemplateOutlet]="groupHeader.template"
-        [ngTemplateOutletContext]="groupContext"
-      >
-      </ng-template>
+      <div class="datatable-group-cell">
+        <div *ngIf="groupHeader.checkboxable">
+          <label
+            class="datatable-checkbox"
+          >
+            <input #select type="checkbox" [checked]="selectedGroupRows.length === row.value.length" (change)="onCheckboxChange(select.checked)" />
+          </label>
+        </div>
+        <ng-template
+          *ngIf="groupHeader && groupHeader.template"
+          [ngTemplateOutlet]="groupHeader.template"
+          [ngTemplateOutletContext]="groupContext"
+        >
+        </ng-template>
+      </div>
     </div>
     <ng-content *ngIf="(groupHeader && groupHeader.template && expanded) || !groupHeader || !groupHeader.template">
     </ng-content>
@@ -45,6 +58,7 @@ import { BehaviorSubject } from 'rxjs';
   }
 })
 export class DataTableRowWrapperComponent implements DoCheck, OnInit {
+  @ViewChild('select') checkBoxInput!: ElementRef<HTMLInputElement>;
   @Input() innerWidth: number;
   @Input() rowDetail: any;
   @Input() groupHeader: any;
@@ -53,7 +67,9 @@ export class DataTableRowWrapperComponent implements DoCheck, OnInit {
   @Input() row: any;
   @Input() groupedRows: any;
   @Input() disableCheck: (row: any) => boolean;
+  @Input() selected: any[];
   @Output() rowContextmenu = new EventEmitter<{ event: MouseEvent; row: any }>(false);
+  @Output() groupHeaderSelect = new EventEmitter();
 
   @Input() set rowIndex(val: number) {
     this._rowIndex = val;
@@ -65,6 +81,8 @@ export class DataTableRowWrapperComponent implements DoCheck, OnInit {
   get rowIndex(): number {
     return this._rowIndex;
   }
+
+  selectedGroupRows = [];
 
   @Input() set expanded(val: boolean) {
     this._expanded = val;
@@ -81,11 +99,13 @@ export class DataTableRowWrapperComponent implements DoCheck, OnInit {
   rowContext: any;
   disable$: BehaviorSubject<boolean>;
 
+
   private rowDiffer: KeyValueDiffer<unknown, unknown>;
+  private selectedRowsDiffer: IterableDiffer<unknown[]>;
   private _expanded = false;
   private _rowIndex: number;
 
-  constructor(private cd: ChangeDetectorRef, private differs: KeyValueDiffers) {
+  constructor(private cd: ChangeDetectorRef, private differs: KeyValueDiffers, private iterableDiffers: IterableDiffers) {
     this.groupContext = {
       group: this.row,
       expanded: this.expanded,
@@ -99,6 +119,7 @@ export class DataTableRowWrapperComponent implements DoCheck, OnInit {
     };
 
     this.rowDiffer = differs.find({}).create();
+    this.selectedRowsDiffer = this.iterableDiffers.find(this.selected ?? []).create();
   }
 
   ngOnInit(): void {
@@ -120,6 +141,17 @@ export class DataTableRowWrapperComponent implements DoCheck, OnInit {
       this.groupContext.group = this.row;
       this.cd.markForCheck();
     }
+    if(this.groupHeader?.checkboxable && this.selectedRowsDiffer.diff(this.selected)) {
+      const selectedRows = this.selected.filter(row => this.row.value.find(item => item === row));
+      if(this.checkBoxInput) {
+        if(selectedRows.length && selectedRows.length !== this.row.value.length) {
+          this.checkBoxInput.nativeElement.indeterminate = true;
+        } else {
+          this.checkBoxInput.nativeElement.indeterminate = false;
+        }
+      }
+      this.selectedGroupRows = selectedRows;
+    }
   }
 
   @HostListener('contextmenu', ['$event'])
@@ -135,5 +167,15 @@ export class DataTableRowWrapperComponent implements DoCheck, OnInit {
     styles.width = this.innerWidth + 'px';
 
     return styles;
+  }
+
+  onCheckboxChange(event: any): void {
+    this.selected = [...this.selected.filter(row => !this.row.value.find(item => item === row))];
+    if (event) {
+      this.selected = [...this.selected, ...this.row.value];
+    }
+    this.groupHeaderSelect.emit({
+      selected: this.selected
+    });
   }
 }

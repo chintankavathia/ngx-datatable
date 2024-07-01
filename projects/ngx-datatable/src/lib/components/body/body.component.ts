@@ -81,6 +81,8 @@ import { DragEventData } from '../../types/drag-events.type';
           [disableCheck]="disableRowCheck"
           [expanded]="getRowExpanded(group)"
           [rowIndex]="getRowIndex(group && group[i])"
+          [selected]="selected"
+          (groupHeaderSelect)="groupHeaderSelect.emit($event)"
           (rowContextmenu)="rowContextmenu.emit($event)"
         >
           <ng-container *ngIf="rowDefTemplate else bodyRow">
@@ -338,6 +340,7 @@ export class DataTableBodyComponent implements OnInit, OnDestroy {
   @Output() detailToggle: EventEmitter<any> = new EventEmitter();
   @Output() rowContextmenu = new EventEmitter<{ event: MouseEvent; row: any }>(false);
   @Output() treeAction: EventEmitter<any> = new EventEmitter();
+  @Output() groupHeaderSelect = new EventEmitter();
 
   @ViewChild(ScrollerComponent) scroller: ScrollerComponent;
 
