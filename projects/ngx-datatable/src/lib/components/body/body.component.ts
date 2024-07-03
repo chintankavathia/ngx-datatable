@@ -47,6 +47,7 @@ import { DragEventData } from '../../types/drag-events.type';
       [selectEnabled]="selectEnabled"
       [selectionType]="selectionType"
       [rowIdentity]="rowIdentity"
+      [groupedRows]="groupedRows"
       (select)="select.emit($event)"
       (activate)="activate.emit($event)"
     >

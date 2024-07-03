@@ -10,6 +10,7 @@ export interface Model {
   rowElement: any;
   cellElement: any;
   cellIndex: number;
+  colGroup: string;
 }
 
 @Component({
@@ -25,6 +26,7 @@ export class DataTableSelectionComponent {
   @Input() rowIdentity: any;
   @Input() selectCheck: any;
   @Input() disableCheck: any;
+  @Input() groupedRows: any[];
 
   @Output() activate: EventEmitter<any> = new EventEmitter();
   @Output() select: EventEmitter<any> = new EventEmitter();
@@ -106,7 +108,7 @@ export class DataTableSelectionComponent {
       if (!model.cellElement || !isCellSelection) {
         this.focusRow(model.rowElement, keyCode);
       } else if (isCellSelection) {
-        this.focusCell(model.cellElement, model.rowElement, keyCode, model.cellIndex);
+        this.focusCell(model.cellElement, model.rowElement, keyCode, model.cellIndex, model.colGroup);
       }
     }
   }
@@ -117,8 +119,7 @@ export class DataTableSelectionComponent {
   }
 
   getPrevNextRow(rowElement: any, keyCode: number): any {
-    const parentElement = rowElement.parentElement;
-
+    const parentElement = this.groupedRows ? rowElement : rowElement.parentElement;
     if (parentElement) {
       let focusElement: HTMLElement;
       if (keyCode === Keys.up) {
@@ -126,24 +127,36 @@ export class DataTableSelectionComponent {
       } else if (keyCode === Keys.down) {
         focusElement = parentElement.nextElementSibling;
       }
-
+      if (this.groupedRows) {
+        // In case of row grouping skip group header div
+        if(focusElement && keyCode === Keys.up && !focusElement.matches('datatable-body-row')) {
+          focusElement = focusElement.closest('datatable-row-wrapper')?.previousElementSibling?.lastElementChild as HTMLElement;
+        }
+        // If the row is last in group then jump to the first row of next group
+        if(!focusElement && keyCode === Keys.down) {
+          focusElement = rowElement.parentElement?.nextElementSibling?.children[1];
+        }
+        return focusElement;
+      }
       if (focusElement && focusElement.children.length) {
         return focusElement.children[0];
       }
     }
   }
 
-  focusCell(cellElement: any, rowElement: any, keyCode: number, cellIndex: number): void {
+  focusCell(cellElement: any, rowElement: any, keyCode: number, cellIndex: number, colGroup: string): void {
     let nextCellElement: HTMLElement;
 
     if (keyCode === Keys.left) {
-      nextCellElement = cellElement.previousElementSibling;
+      nextCellElement = cellElement.previousElementSibling ?? cellElement.parentElement?.previousElementSibling?.lastElementChild;
     } else if (keyCode === Keys.right) {
-      nextCellElement = cellElement.nextElementSibling;
+      nextCellElement = cellElement.nextElementSibling ?? cellElement.parentElement?.nextElementSibling?.firstElementChild;
     } else if (keyCode === Keys.up || keyCode === Keys.down) {
       const nextRowElement = this.getPrevNextRow(rowElement, keyCode);
       if (nextRowElement) {
-        const children = nextRowElement.getElementsByClassName('datatable-body-cell');
+        // By default cells are part of div.datatable-row-center
+        const selector = `.datatable-row-${colGroup ?? 'center'}`;
+        const children = nextRowElement.querySelectorAll(`${selector} .datatable-body-cell`);
         if (children.length) {nextCellElement = children[cellIndex];}
       }
     }

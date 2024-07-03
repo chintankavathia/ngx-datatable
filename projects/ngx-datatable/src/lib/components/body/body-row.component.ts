@@ -49,7 +49,7 @@ import { DataTableRowWrapperComponent } from './body-row-wrapper.component';
         [disable$]="disable$"
         [treeStatus]="treeStatus"
         [ghostLoadingIndicator]="ghostLoadingIndicator"
-        (activate)="onActivate($event, ii)"
+        (activate)="onActivate($event, ii, colGroup.type)"
         (treeAction)="onTreeAction()"
       >
       </datatable-body-cell>
@@ -220,9 +220,10 @@ export class DataTableBodyRowComponent implements DoCheck, OnChanges {
     return styles;
   }
 
-  onActivate(event: any, index: number): void {
+  onActivate(event: any, index: number, colGroupType: string): void {
     event.cellIndex = index;
     event.rowElement = this._element;
+    event.colGroup = colGroupType;
     this.activate.emit(event);
   }
 
