@@ -40,7 +40,6 @@ import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
           <label class="datatable-checkbox">
             <input
               type="checkbox"
-              [attr.aria-label]="ariaLabelSelectRow"
               [disabled]="disable$ | async"
               [checked]="isSelected"
               (click)="onCheckboxChange($event)"
@@ -221,8 +220,6 @@ export class DataTableBodyCellComponent<TRow extends { level?: number } = any>
   }
 
   @Input() ghostLoadingIndicator = false;
-
-  @Input() ariaLabelSelectRow = 'Select/Deselect row';
 
   @Output() activate: EventEmitter<ActivateEvent<TRow>> = new EventEmitter();
 
