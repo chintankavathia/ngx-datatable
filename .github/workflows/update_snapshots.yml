@@ -73,6 +73,6 @@ jobs:
 
       - name: Create a pull request
         run: |
-          gh pr create --base main --head $BRANCH_NAME --title "Update Playwright snapshots" --body "Automated PR to update snapshots based on run ID ${{ github.run_id }}."
+          gh pr create --base main --head snapshot-update-${{ github.run_id }} --title "Update Playwright snapshots" --body "Automated PR to update snapshots based on run ID ${{ github.run_id }}."
         env:
           GITHUB_TOKEN: ${{ secrets.SNAPSHOT_REPO_TOKEN }}
