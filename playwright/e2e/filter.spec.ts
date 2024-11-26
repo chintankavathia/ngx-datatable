@@ -18,11 +18,11 @@ test.describe('table with filter', () => {
     filter.clear();
     filter.pressSequentially('Wong Craft');
     await expect(page.getByText('1 total')).toBeVisible();
-    await ngx.runVisualAndA11yTests('filtered');
+    await ngx.runVisualAndA11yTests('filtered-test');
 
     filter.clear();
     filter.pressSequentially('Some random text');
     await expect(page.getByText('No data to display')).toBeVisible();
-    await ngx.runVisualAndA11yTests('empty');
+    await ngx.runVisualAndA11yTests('empty-a');
   });
 });

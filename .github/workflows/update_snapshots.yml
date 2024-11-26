@@ -49,7 +49,7 @@ jobs:
 
       - name: Copy generated snapshots
         run: |
-          rsync -av --delete playwright/snapshots/ snapshot-repo/
+          rsync -av --delete playwright/snapshots/ snapshot-repo/snapshots
 
       - name: Commit and push changes to snapshot repo
         working-directory: snapshot-repo
