@@ -67,9 +67,9 @@ jobs:
           git commit -m "$COMMIT_MESSAGE" || echo "No changes to commit"
 
           # Ensure remote is set up correctly
-          git remote set-url origin https://${SNAPSHOT_REPO_TOKEN}@github.com/chintankavathia/ngx-datatable-snapshots.git
+          git remote set-url origin https://${{ secrets.SNAPSHOT_REPO_TOKEN }}@github.com/chintankavathia/ngx-datatable-snapshots.git
 
-          git push --set-upstream origin $BRANCH_NAME
+          git push origin $BRANCH_NAME
 
       - name: Create pull request in snapshot repo
         uses: peter-evans/create-pull-request@v5
