@@ -44,6 +44,10 @@ jobs:
           cd snapshot-repo
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+
+          # Fetch remote branches to avoid the "no upstream branch" error
+          git fetch origin
+
           BRANCH_NAME="snapshot-update-${{ github.run_id }}"
           git checkout -b $BRANCH_NAME
 
@@ -61,10 +65,7 @@ jobs:
           # Ensure remote is set up correctly
           git remote set-url origin https://${SNAPSHOT_REPO_TOKEN}@github.com/chintankavathia/ngx-datatable-snapshots.git
 
-          # Explicitly set upstream for the branch
-          git branch --set-upstream-to=origin/$BRANCH_NAME $BRANCH_NAME
-
-          git push origin $BRANCH_NAME
+          git push --set-upstream origin $BRANCH_NAME
 
       - name: Create pull request in snapshot repo
         uses: peter-evans/create-pull-request@v5
