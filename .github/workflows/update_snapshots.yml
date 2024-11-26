@@ -45,6 +45,9 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
+          # Ensure remote is set up correctly
+          git remote set-url origin https://${SNAPSHOT_REPO_TOKEN}@github.com/chintankavathia/ngx-datatable-snapshots.git
+          
           # Fetch remote branches to avoid the "no upstream branch" error
           git fetch origin
 
