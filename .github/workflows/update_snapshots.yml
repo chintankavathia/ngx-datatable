@@ -42,8 +42,8 @@ jobs:
         run: |
           git clone https://${SNAPSHOT_REPO_TOKEN}@github.com/chintankavathia/ngx-datatable-snapshots.git snapshot-repo
           cd snapshot-repo
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           BRANCH_NAME="snapshot-update-${{ github.run_id }}"
           git checkout -b $BRANCH_NAME
 
