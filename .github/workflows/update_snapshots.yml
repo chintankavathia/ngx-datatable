@@ -50,6 +50,7 @@ jobs:
 
           BRANCH_NAME="snapshot-update-${{ github.run_id }}"
           git checkout -b $BRANCH_NAME
+          git push -u
 
       - name: Copy generated snapshots
         run: |
