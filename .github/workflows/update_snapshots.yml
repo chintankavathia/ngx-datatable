@@ -73,6 +73,9 @@ jobs:
 
       - name: Create a pull request
         run: |
+          git remote set-url origin https://${{ secrets.SNAPSHOT_REPO_TOKEN }}@github.com/chintankavathia/ngx-datatable-snapshots.git
+          # Store the PAT in a file that can be accessed by the
+          # GitHub CLI.
+          echo "${{ secrets.SNAPSHOT_REPO_TOKEN }}" > token.txt
+          gh auth login --with-token < token.txt
           gh pr create --base main --head snapshot-update-${{ github.run_id }} --title "Update Playwright snapshots" --body "Automated PR to update snapshots based on run ID ${{ github.run_id }}."
-        env:
-          GITHUB_TOKEN: ${{ secrets.SNAPSHOT_REPO_TOKEN }}
