@@ -46,6 +46,7 @@ jobs:
           git config user.email "actions@github.com"
           BRANCH_NAME="snapshot-update-${{ github.run_id }}"
           git checkout -b $BRANCH_NAME
+          git branch --set-upstream-to=origin/$BRANCH_NAME $BRANCH_NAME
 
       - name: Copy generated snapshots
         run: |
@@ -57,7 +58,7 @@ jobs:
           git add .
           COMMIT_MESSAGE="Update Playwright snapshots (Run ID: ${{ github.run_id }})"
           git commit -m "$COMMIT_MESSAGE" || echo "No changes to commit"
-          git push --set-upstream origin $BRANCH_NAME
+          git push origin -u $BRANCH_NAME
 
       - name: Create pull request in snapshot repo
         uses: peter-evans/create-pull-request@v5
