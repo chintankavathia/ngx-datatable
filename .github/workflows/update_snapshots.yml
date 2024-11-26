@@ -75,5 +75,5 @@ jobs:
         run: |
           git remote set-url origin https://${{ secrets.SNAPSHOT_REPO_TOKEN }}@github.com/chintankavathia/ngx-datatable-snapshots.git
           # We need to re-auth in order to create PR
-          GH_TOKEN="${{ secrets.SNAPSHOT_REPO_TOKEN }}" gh auth login --with-token
+          echo "${{ secrets.SNAPSHOT_REPO_TOKEN }}" | gh auth login --with-token
           gh pr create --base main --head snapshot-update-${{ github.run_id }} --title "Update Playwright snapshots" --body "Automated PR to update snapshots based on run ID ${{ github.run_id }}."
