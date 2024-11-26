@@ -47,13 +47,13 @@ jobs:
 
           # Ensure remote is set up correctly
           git remote set-url origin https://${SNAPSHOT_REPO_TOKEN}@github.com/chintankavathia/ngx-datatable-snapshots.git
-          
+
           # Fetch remote branches to avoid the "no upstream branch" error
           git fetch origin
 
           BRANCH_NAME="snapshot-update-${{ github.run_id }}"
           git checkout -b $BRANCH_NAME
-          git push -u
+          git push --set-upstream origin $BRANCH_NAME
 
       - name: Copy generated snapshots
         run: |
