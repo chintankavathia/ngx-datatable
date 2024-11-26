@@ -57,7 +57,7 @@ jobs:
           git add .
           COMMIT_MESSAGE="Update Playwright snapshots (Run ID: ${{ github.run_id }})"
           git commit -m "$COMMIT_MESSAGE" || echo "No changes to commit"
-          git push origin $BRANCH_NAME
+          git push --set-upstream origin $BRANCH_NAME
 
       - name: Create pull request in snapshot repo
         uses: peter-evans/create-pull-request@v5
