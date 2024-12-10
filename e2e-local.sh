@@ -48,9 +48,6 @@ fi
 
 echo "Using '$DOCKER' in '$NETWORK_MODE' mode, connecting to '$LOCAL_ADDRESS:$PORT'"
 
-# Fetch snapshots using the npm script
-echo "Fetching snapshots..."
-npm run fetch-snapshots
 
 if [ x$1 = "xshell" ]; then
   shift

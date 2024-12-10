@@ -50,7 +50,7 @@ export type StaticTestOptions = {
   skipAutoScaleViewport?: boolean;
 };
 
-class NgxTestHelpers {
+class SiTestHelpers {
   private disableAnimationsTag: ElementHandle<Node> | undefined;
 
   constructor(
@@ -216,11 +216,11 @@ class NgxTestHelpers {
 }
 
 export const test = baseTest.extend<{
-  ngx: NgxTestHelpers;
+  si: SiTestHelpers;
 }>({
-  ngx: [
+  si: [
     async ({ page }, use, testInfo) => {
-      await use(new NgxTestHelpers(page, testInfo));
+      await use(new SiTestHelpers(page, testInfo));
     },
     { box: true }
   ]
