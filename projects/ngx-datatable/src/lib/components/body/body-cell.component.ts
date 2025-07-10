@@ -196,7 +196,7 @@ export class DataTableBodyCellComponent<TRow extends Row = any> implements DoChe
   @Output() readonly treeAction = new EventEmitter<any>();
 
   @HostBinding('class')
-  get columnCssClasses(): string {
+  protected get columnCssClasses(): string {
     let cls = 'datatable-body-cell';
     if (this.column.cellClass) {
       if (typeof this.column.cellClass === 'string') {
@@ -233,22 +233,22 @@ export class DataTableBodyCellComponent<TRow extends Row = any> implements DoChe
   }
 
   @HostBinding('style.width.px')
-  get width(): number {
+  protected get width(): number {
     return this.column.width;
   }
 
   @HostBinding('style.minWidth.px')
-  get minWidth(): number | undefined {
+  protected get minWidth(): number | undefined {
     return this.column.minWidth;
   }
 
   @HostBinding('style.maxWidth.px')
-  get maxWidth(): number | undefined {
+  protected get maxWidth(): number | undefined {
     return this.column.maxWidth;
   }
 
   @HostBinding('style.height')
-  get height(): string | number {
+  protected get height(): string | number {
     const height = this.rowHeight;
     if (isNaN(height)) {
       return height;
@@ -256,12 +256,11 @@ export class DataTableBodyCellComponent<TRow extends Row = any> implements DoChe
     return height + 'px';
   }
 
-  sanitizedValue!: string;
-  value: any;
-  isFocused = false;
+  protected sanitizedValue!: string;
+  protected value: any;
+  protected cellContext: CellContext<TRow>;
 
-  cellContext: CellContext<TRow>;
-
+  private isFocused = false;
   private _isSelected?: boolean;
   private _column!: TableColumnInternal;
   private _row!: TRow;
@@ -295,7 +294,7 @@ export class DataTableBodyCellComponent<TRow extends Row = any> implements DoChe
     this.checkValueUpdates();
   }
 
-  checkValueUpdates(): void {
+  private checkValueUpdates(): void {
     let value = '';
 
     if (!this.row || this.column?.prop == undefined) {
@@ -321,17 +320,17 @@ export class DataTableBodyCellComponent<TRow extends Row = any> implements DoChe
   }
 
   @HostListener('focus')
-  onFocus(): void {
+  protected onFocus(): void {
     this.isFocused = true;
   }
 
   @HostListener('blur')
-  onBlur(): void {
+  protected onBlur(): void {
     this.isFocused = false;
   }
 
   @HostListener('click', ['$event'])
-  onClick(event: MouseEvent): void {
+  protected onClick(event: MouseEvent): void {
     this.activate.emit({
       type: 'click',
       event,
@@ -345,7 +344,7 @@ export class DataTableBodyCellComponent<TRow extends Row = any> implements DoChe
   }
 
   @HostListener('dblclick', ['$event'])
-  onDblClick(event: MouseEvent): void {
+  protected onDblClick(event: MouseEvent): void {
     this.activate.emit({
       type: 'dblclick',
       event,
@@ -359,7 +358,7 @@ export class DataTableBodyCellComponent<TRow extends Row = any> implements DoChe
   }
 
   @HostListener('keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent): void {
+  protected onKeyDown(event: KeyboardEvent): void {
     const key = event.key;
     const isTargetCell = event.target === this._element;
 
@@ -387,7 +386,7 @@ export class DataTableBodyCellComponent<TRow extends Row = any> implements DoChe
     }
   }
 
-  onCheckboxChange(event: Event): void {
+  protected onCheckboxChange(event: Event): void {
     this.activate.emit({
       type: 'checkbox',
       event,
@@ -401,18 +400,18 @@ export class DataTableBodyCellComponent<TRow extends Row = any> implements DoChe
     });
   }
 
-  stripHtml(html: string): string {
+  private stripHtml(html: string): string {
     if (!html.replace) {
       return html;
     }
     return html.replace(/<\/?[^>]+(>|$)/g, '');
   }
 
-  onTreeAction() {
+  protected onTreeAction() {
     this.treeAction.emit(this.row);
   }
 
-  calcLeftMargin(column: TableColumnInternal, row: RowOrGroup<TRow>): number {
+  protected calcLeftMargin(column: TableColumnInternal, row: RowOrGroup<TRow>): number {
     const levelIndent = column.treeLevelIndent ?? 50;
     return column.isTreeColumn ? (row as TRow).level! * levelIndent : 0;
   }
