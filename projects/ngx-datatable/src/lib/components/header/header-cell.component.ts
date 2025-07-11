@@ -92,7 +92,7 @@ export class DataTableHeaderCellComponent implements OnInit, OnDestroy {
   @Input() enableClearingSortState = false;
   @Input() ariaHeaderCheckboxMessage!: string;
 
-  _allRowsSelected?: boolean;
+  private _allRowsSelected?: boolean;
 
   @Input() set allRowsSelected(value) {
     this._allRowsSelected = value;
@@ -140,7 +140,7 @@ export class DataTableHeaderCellComponent implements OnInit, OnDestroy {
   @Output() readonly resizing = new EventEmitter<{ width: number; column: TableColumnInternal }>();
 
   @HostBinding('class')
-  get columnCssClasses(): string {
+  protected get columnCssClasses(): string {
     let cls = 'datatable-header-cell';
 
     if (this.column.sortable) {
@@ -179,38 +179,38 @@ export class DataTableHeaderCellComponent implements OnInit, OnDestroy {
   }
 
   @HostBinding('attr.title')
-  get name(): string | undefined {
+  protected get name(): string | undefined {
     // guaranteed to have a value by setColumnDefaults() in column-helper.ts
     return this.column.headerTemplate === undefined ? this.column.name : undefined;
   }
 
   @HostBinding('style.minWidth.px')
-  get minWidth(): number | undefined {
+  protected get minWidth(): number | undefined {
     return this.column.minWidth;
   }
 
   @HostBinding('style.maxWidth.px')
-  get maxWidth(): number | undefined {
+  protected get maxWidth(): number | undefined {
     return this.column.maxWidth;
   }
 
   @HostBinding('style.width.px')
-  get width(): number {
+  protected get width(): number {
     return this.column.width;
   }
 
-  @HostBinding('tabindex') get tabindex(): number {
+  @HostBinding('tabindex') protected get tabindex(): number {
     return this.column.sortable ? 0 : -1;
   }
 
-  get isCheckboxable(): boolean | undefined {
+  protected get isCheckboxable(): boolean | undefined {
     return this.column.headerCheckboxable;
   }
 
-  sortClass?: string;
-  sortDir?: SortDirection;
+  protected sortClass?: string;
+  private sortDir?: SortDirection;
 
-  cellContext: HeaderCellContext;
+  protected cellContext: HeaderCellContext;
 
   private _column!: TableColumnInternal;
   private _sorts!: SortPropDir[];
@@ -228,7 +228,7 @@ export class DataTableHeaderCellComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('contextmenu', ['$event'])
-  onContextmenu($event: MouseEvent): void {
+  protected onContextmenu($event: MouseEvent): void {
     this.columnContextmenu.emit({ event: $event, column: this.column });
     if (this.column.draggable) {
       $event.preventDefault();
@@ -236,7 +236,7 @@ export class DataTableHeaderCellComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('keydown.enter')
-  enter(): void {
+  protected enter(): void {
     this.onSort();
   }
 
@@ -252,7 +252,7 @@ export class DataTableHeaderCellComponent implements OnInit, OnDestroy {
     this.destroySubscription();
   }
 
-  calcSortDir(sorts: SortPropDir[]): any {
+  private calcSortDir(sorts: SortPropDir[]): any {
     if (sorts && this.column) {
       const sort = sorts.find((s: any) => s.prop === this.column.prop);
 
@@ -263,7 +263,7 @@ export class DataTableHeaderCellComponent implements OnInit, OnDestroy {
   }
   // Counter to reset sort once user sort asc and desc.
   private totalSortStatesApplied = 0;
-  onSort(): void {
+  protected onSort(): void {
     if (!this.column.sortable) {
       return;
     }
@@ -282,7 +282,7 @@ export class DataTableHeaderCellComponent implements OnInit, OnDestroy {
     });
   }
 
-  calcSortClass(sortDir: SortDirection | undefined): string | undefined {
+  private calcSortClass(sortDir: SortDirection | undefined): string | undefined {
     if (!this.cellContext.column.sortable) {
       return undefined;
     }
