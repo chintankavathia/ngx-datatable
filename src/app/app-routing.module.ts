@@ -202,6 +202,13 @@ export const routes: Routes = [
       )
   },
   {
+    path: 'bulk-actions-selection',
+    loadComponent: () =>
+      import('./selection/selection-bulk-actions.component').then(
+        c => c.BulkActionsSelectionComponent
+      )
+  },
+  {
     path: 'templateref',
     loadComponent: () =>
       import('./templates/template-obj.component').then(c => c.TemplateRefTemplatesComponent)
